@@ -1,6 +1,6 @@
 {
-    "outputfile": "MinGW.bat", 
-    "hideshell": true,
+	"outputfile": "MinGW.bat",
+	"hideshell": false,
 	"entries": [
 		{"type": "EXE", "command": "C:\\sicherung\\tools\\MinGW\\set_distro_paths.bat"},
 		{"type": "ENV", "key": "BOOST_INCLUDEDIR", "value": "C:\\sicherung\\tools\\MinGW\\include"},
@@ -8,7 +8,6 @@
 		{"type": "PATH", "path": "C:\\sicherung\\tools\\MinGW\\bin"},
         {"type": "PATH", "path": "C:\\sicherung\\tools\\MinGW\\x86_64-w64-mingw32\\bin"},
         {"type": "PATH", "path": "C:\\sicherung\\tools\\MinGW\\libexec\\gcc\\x86_64-w64-mingw32\\13.2.0"},
-        {"type": "PATH", "path": "C:\\sicherung\\tools\\MinGW\\include"},
         {"type": "PATH", "path": "C:\\sicherung\\tools\\MinGW\\include"},
         {"type": "PATH", "path": "C:\\sicherung\\tools\\MinGW\\lib"},
         {"type": "PATH", "path": "C:\\sicherung\\tools\\xerces-c\\bin"},

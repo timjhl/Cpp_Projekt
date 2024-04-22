@@ -10,6 +10,7 @@ private:
     bool hideshell;
     std::string application;
     std::vector<Entry> entries;
+    bool firstIt = true;
 public:
     BatchGenerator();
     bool readJsonFile(const std::string& filename);
