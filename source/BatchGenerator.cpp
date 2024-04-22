@@ -63,7 +63,7 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
     if(!retFailure)
     {
     cout << "Reading JSON file\n";
-        std::string outputfile = obj["outputfile"].asString();
+        outputfile = obj["outputfile"].asString();
         cout << "Outputfile: " << outputfile << "\n";
         
         if (!obj.isMember("hideshell") || !obj["hideshell"].isBool()) 
