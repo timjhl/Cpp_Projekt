@@ -4,7 +4,6 @@
 #include "includes.h"
 using namespace std;
 
-
 struct Entry {
     string type;
     string key;

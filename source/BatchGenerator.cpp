@@ -2,7 +2,7 @@
 
 using namespace std;
 
-BatchGenerator::BatchGenerator() : hideshell(false) 
+BatchGenerator::BatchGenerator()
 {
     cout << "BatchGenerator created" << endl;
 } //end of constructor
@@ -125,7 +125,10 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
         {   
             application = obj["application"].asString();
         }
+        if(!retFailure)
+        {
         generateBatchFile();
+        }
     }
     
     return retFailure;
@@ -164,12 +167,12 @@ void BatchGenerator::generateBatchFile()
     ofstream outputToBatchFile(outputfile);
 
         // Ausblenden der Shell
-        if (!hideshell) {
             //Schreibe in Batch-Datei
-            outputToBatchFile << "@ECHO OFF\n";
-        }
+        outputToBatchFile << "@ECHO OFF\n";
+      
 
-        if (hideshell) {
+        if (hideshell) 
+        {
             //Schreibe in Batch-Datei
             outputToBatchFile << "C:\\Windows\\System32\\cmd.exe /c \"";
         }
@@ -179,30 +182,39 @@ void BatchGenerator::generateBatchFile()
             outputToBatchFile << "C:\\Windows\\System32\\cmd.exe /k \"";
         }
         
-
         // Einträge verarbeiten
+        string lastPath;
         for (const auto& entry : entries) {
             if (entry.type == "ENV") {
                 // Umgebungsvariable setzen
-                outputToBatchFile << "set " << entry.key << "=" << entry.value << "\n";
+                outputToBatchFile << "set " << entry.key << "=" << entry.value;
             } else if (entry.type == "EXE") {
                 // Befehl ausführen
-                outputToBatchFile << entry.command << "\n";
+                outputToBatchFile << entry.command;
             } else if (entry.type == "PATH") {
-                // Pfad hinzufügen
-                outputToBatchFile << "set path=" << entry.path << ";%path%\n";
+                lastPath = entry.path;
+                outputToBatchFile << "set path=" << entry.path;
             }
         }
+            if (!lastPath.empty())
+            {
+            outputToBatchFile << "%path%";
+            }
 
         // Abschließende Anwendungsausführung, falls angegeben
         if (!application.empty()) {
-            outputToBatchFile << application << "\"\n";
+            outputToBatchFile << application;
         }
 
         // Einblendung der Shell
         if (!hideshell) {
-            outputToBatchFile << "@ECHO ON\n";
+            outputToBatchFile << "\"\n@ECHO ON\n";
         }
+
+        if (hideshell) {
+            outputToBatchFile << "\"\n@ECHO OFF\n";
+        }
+
         outputToBatchFile << "\r\n";
         //Schliesse ausgabestream
         outputToBatchFile.close();

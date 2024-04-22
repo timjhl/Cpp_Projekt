@@ -1,5 +1,5 @@
 {
-    "outputfile": "MinGW64.bat", 
+    "outputfile": "MinGW.bat", 
     "hideshell": true,
 	"entries": [
 		{"type": "EXE", "command": "C:\\sicherung\\tools\\MinGW\\set_distro_paths.bat"},
@@ -20,5 +20,4 @@
         {"type": "PATH", "path": "C:\\sicherung\\tools\\VSCode"}
 	],
 	"application": null
-    
 }
