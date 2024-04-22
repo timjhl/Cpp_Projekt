@@ -187,13 +187,19 @@ void BatchGenerator::generateBatchFile()
         for (const auto& entry : entries) {
             if (entry.type == "ENV") {
                 // Umgebungsvariable setzen
-                outputToBatchFile << "set " << entry.key << "=" << entry.value;
+                outputToBatchFile << " && set " << entry.key << "=" << entry.value;
             } else if (entry.type == "EXE") {
                 // Befehl ausführen
                 outputToBatchFile << entry.command;
             } else if (entry.type == "PATH") {
-                lastPath = entry.path;
-                outputToBatchFile << "set path=" << entry.path;
+                if (firstIt){
+                    lastPath = entry.path;
+                    outputToBatchFile << " && set path=" << entry.path;
+                    firstIt = false;
+                } else {
+                    lastPath = entry.path;
+                    outputToBatchFile << ";" << entry.path;
+                  }
             }
         }
             if (!lastPath.empty())
@@ -222,13 +228,19 @@ void BatchGenerator::generateBatchFile()
 
 void BatchGenerator::printHelp() 
 {
-    cout << "Benutzung: batchgen [option] <inputfile>\n"
+    cout << "Verwendung: batchgen [Option] <Eingabedatei>\n"
         << "Erstellt eine Batch-Datei basierend auf den Einstellungen in der JSON-Datei.\n\n"
         << "Optionen:\n"
-        << "  -h, --help       Zeigt diese Hilfeanzeige an.\n\n"
+        << "  -h, --help       Zeigt diese Hilfemeldung an.\n\n"
+        << "Funktionen:\n"
+        << "  - Mehrere JSON-Dateien können nacheinander eingelesen werden.\n\n"
         << "Autorenteam:\n"
-        << "  Entwickelt von Team XYZ\n"
-        << "  Kontakt:\n";
+        << "  Entwickelt von Mika Urban, Fabio Behmüller, Niklas Scheffold und Tim Johler\n"
+        << "  Kontakt:\n"
+        << "    - Mika: mika@example.com\n"
+        << "    - Fabio: fabio@example.com\n"
+        << "    - Niklas: niklas@example.com\n"
+        << "    - Tim: tim@example.com\n";
 }//end of printHelp
 
 
