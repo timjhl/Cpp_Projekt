@@ -1,0 +1,3 @@
+/home/tim/Programmieren/GitHub/Cpp_Projekt/build/CMakeFiles/genbatch.dir
+/home/tim/Programmieren/GitHub/Cpp_Projekt/build/CMakeFiles/edit_cache.dir
+/home/tim/Programmieren/GitHub/Cpp_Projekt/build/CMakeFiles/rebuild_cache.dir

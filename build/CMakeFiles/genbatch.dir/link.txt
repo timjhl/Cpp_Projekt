@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/genbatch.dir/source/main.cpp.o CMakeFiles/genbatch.dir/source/BatchGenerator.cpp.o -o genbatch  -ljsoncpp 
