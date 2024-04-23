@@ -121,7 +121,7 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
                 retFailure = true;
             } 
         } 
-        else if(!retFailure)
+        if(!retFailure)
         {   
             application = obj["application"].asString();
         }
@@ -204,22 +204,22 @@ void BatchGenerator::generateBatchFile()
         }
             if (!lastPath.empty())
             {
-            outputToBatchFile << "%path%";
+            outputToBatchFile << ";%path%";
             }
 
         // Abschließende Anwendungsausführung, falls angegeben
         if (!application.empty()) {
-            outputToBatchFile << application;
+
+            std::string delimiter = ".";
+            size_t pos = outputfile.find(delimiter);
+            std::string extractedString = outputfile.substr(0, pos);
+            
+            outputToBatchFile << " && start \"" << extractedString <<"\" "<< application;
         }
 
-        // Einblendung der Shell
-        if (!hideshell) {
+        // Einblendung der Shel
             outputToBatchFile << "\"\n@ECHO ON\n";
-        }
 
-        if (hideshell) {
-            outputToBatchFile << "\"\n@ECHO OFF\n";
-        }
 
         outputToBatchFile << "\r\n";
         //Schliesse ausgabestream
