@@ -64,7 +64,6 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
     {
     cout << "Reading JSON file\n";
         outputfile = obj["outputfile"].asString();
-        cout << "Outputfile: " << outputfile << "\n";
         
         if (!obj.isMember("hideshell") || !obj["hideshell"].isBool()) 
         {
@@ -82,7 +81,6 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
             Entry entry;
             entry.type = jsonEntries[i]["type"].asString();
             if (entry.type == "ENV") {
-                cout << "ENV entry found\n";
                 if (jsonEntries[i].size() != 3 || !jsonEntries[i].isMember("key") || !jsonEntries[i].isMember("value")) {
                     std::cerr << "Ungültiger ENV-Eintrag in Zeile " << line << ", die Batch-Datei wird nicht erstellt" << std::endl;
                     retFailure = true;
@@ -91,7 +89,6 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
                 entry.key = jsonEntries[i]["key"].asString();
                 entry.value = jsonEntries[i]["value"].asString();
             } else if (entry.type == "EXE") {
-                cout << "EXE entry found\n";
                 if (jsonEntries[i].size() != 2 || !jsonEntries[i].isMember("command")) {
                     std::cerr << "Ungültiger EXE-Eintrag in Zeile " << line << ", die Batch-Datei wird nicht erstellt" << std::endl;
                     retFailure = true;
@@ -99,7 +96,6 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
                 }
                 entry.command = jsonEntries[i]["command"].asString();
             } else if (entry.type == "PATH") {
-                cout << "PATH entry found\n";
                 if (jsonEntries[i].size() != 2 || !jsonEntries[i].isMember("path")) {
                     std::cerr << "Ungültiger PATH-Eintrag in Zeile " << line << ", die Batch-Datei wird nicht erstellt" << std::endl;
                     retFailure = true;
@@ -107,7 +103,6 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
                 }
                 entry.path = jsonEntries[i]["path"].asString();
             } else {
-                cout << "Unknown entry found\n";
                 std::cerr << "Unbekannter Eintrag beim Einlesen der JSON-Datei in Zeile  " << (i+5) << ", die Batch-Datei wird nicht erstellt" << std::endl;
                 retFailure = true;
                 break;
@@ -142,18 +137,18 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
     if (argc > 1) {
         for (int i = 1; i < argc; i++) {
             const string filename = argv[i];
-            if (filename == "-h" || filename == "--help" || filename == "-help" || filename == "--h") {
+            if (filename == "-help") {
                 printHelp();
-                exit(EXIT_SUCCESS);
+                retFailure = true;
+                break;
             }
 
             retFailure = readJsonFile(filename);
             
         }
     } else {
-        cerr << "Fehlende Eingabedatei.\n";
-        //todo print help
-        exit(EXIT_FAILURE);
+        cerr << "Fehlende Eingabe.\n Verwenden Sie 'batchgen -help' für Hilfe.\n";
+        retFailure = true;
     }
 
     return retFailure;
@@ -162,7 +157,7 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
 
 void BatchGenerator::generateBatchFile() 
 {
-    cout << "Erstelle Batch-Datei " << outputfile << ".\n";
+    cout << "Erstelle Batch-Datei: " << outputfile << ".\n";
     //Lege Ausgabedatei an
     ofstream outputToBatchFile(outputfile);
 
