@@ -8,9 +8,9 @@
 #include <cstring>
 #include <cstdlib>
 #include <unistd.h>
-#include <getopt.h>
 #include <filesystem>
 #include <jsoncpp/json/json.h>
 #include <algorithm>
+#include <getopt.h>
 
 #endif

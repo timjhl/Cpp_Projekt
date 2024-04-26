@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(projektabgabe)
-
+project(Projektabgabe)
 set(SOURCE source/main.cpp source/BatchGenerator.cpp)
 set(HEADER includes/header.h includes/BatchGenerator.h)
 set(NAME_EXE genbatch)

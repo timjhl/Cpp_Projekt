@@ -6,10 +6,10 @@ using namespace std;
 
 class BatchGenerator {
 private:
-    std::string outputfile;
+    string outputfile;
     bool hideshell;
-    std::string application;
-    std::vector<Entry> entries;
+    string application;
+    vector<Entry> entries;
     bool firstIt = true;
 public:
     BatchGenerator();

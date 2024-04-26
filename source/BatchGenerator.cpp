@@ -2,10 +2,7 @@
 
 using namespace std;
 
-BatchGenerator::BatchGenerator()
-{
-    cout << "BatchGenerator created" << endl;
-} //end of constructor
+BatchGenerator::BatchGenerator(){}
 
 bool BatchGenerator::readJsonFile(const std::string& filename) 
 {
@@ -14,12 +11,13 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
     Json::Reader reader;
     Json::Value obj;
     size_t line = 0;
+    entries.clear();
 
     reader.parse(file, obj);
     
     if (!std::filesystem::exists(filename)) 
     {
-        std::cerr << "File does not exist: " << filename << std::endl;
+        std::cerr << "Datei existiert nicht: " << filename << std::endl;
         //Failure occured
         retFailure = true;
     }
@@ -62,7 +60,6 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
     } 
     if(!retFailure)
     {
-    cout << "Reading JSON file\n";
         outputfile = obj["outputfile"].asString();
         
         if (!obj.isMember("hideshell") || !obj["hideshell"].isBool()) 
@@ -76,9 +73,9 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
         }
 
         const Json::Value& jsonEntries = obj["entries"];
+        Entry entry;
         
         for (int i = 0; i < jsonEntries.size(); i++) {
-            Entry entry;
             entry.type = jsonEntries[i]["type"].asString();
             if (entry.type == "ENV") {
                 if (jsonEntries[i].size() != 3 || !jsonEntries[i].isMember("key") || !jsonEntries[i].isMember("value")) {
@@ -103,7 +100,7 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
                 }
                 entry.path = jsonEntries[i]["path"].asString();
             } else {
-                std::cerr << "Unbekannter Eintrag beim Einlesen der JSON-Datei in Zeile  " << (i+5) << ", die Batch-Datei wird nicht erstellt" << std::endl;
+                std::cerr << "Unbekannter Eintrag beim Einlesen der JSON-Datei in Zeile  " << line << ", die Batch-Datei wird nicht erstellt" << std::endl;
                 retFailure = true;
                 break;
             }
@@ -122,42 +119,60 @@ bool BatchGenerator::readJsonFile(const std::string& filename)
         }
         if(!retFailure)
         {
-        generateBatchFile();
+            generateBatchFile();
         }
     }
     
     return retFailure;
 }//end of readJsonFile
 
-    bool BatchGenerator::parseCommandLine(int argc, char *argv[]) 
+bool BatchGenerator::parseCommandLine(int argc, char *argv[]) 
 {
     bool retFailure = false;
-    cout << "Parsing command line arguments\n";
-        
-    if (argc > 1) {
-        for (int i = 1; i < argc; i++) {
-            const string filename = argv[i];
-            if (filename == "-help") {
+
+    struct option long_options[] = {
+        {"help", no_argument, 0, 'h'},
+        {0, 0, 0, 0}
+    };
+
+    int option_index = 0;
+    int c;
+    
+    if (argc == 1) {
+    std::cerr << "Fehler: Keine Datei angegeben. Verwenden Sie -h oder --help für Hilfe." << std::endl;
+    return true;
+    }
+
+
+    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+        switch (c) {
+            case 'h':
                 printHelp();
                 retFailure = true;
                 break;
-            }
-
-            retFailure = readJsonFile(filename);
-            
+            case '?':
+                // getopt_long already printed an error message.
+                break;
+            default:
+                abort();
         }
-    } else {
-        cerr << "Fehlende Eingabe.\n Verwenden Sie 'batchgen -help' für Hilfe.\n";
-        retFailure = true;
+    }
+
+    if (!retFailure) {
+        while (optind < argc) {
+            retFailure = readJsonFile(argv[optind++]);
+            if (retFailure) {
+                break;
+            }
+        }
     }
 
     return retFailure;
-}//end of parseCommandLine
-
+}
 
 void BatchGenerator::generateBatchFile() 
 {
-    cout << "Erstelle Batch-Datei: " << outputfile << ".\n";
+    cout << "Erstelle Batch-Datei: " << outputfile << "\n";
     //Lege Ausgabedatei an
     ofstream outputToBatchFile(outputfile);
 
@@ -191,12 +206,14 @@ void BatchGenerator::generateBatchFile()
                     lastPath = entry.path;
                     outputToBatchFile << " && set path=" << entry.path;
                     firstIt = false;
-                } else {
+                } 
+                else {
                     lastPath = entry.path;
                     outputToBatchFile << ";" << entry.path;
-                  }
+                }
             }
         }
+        firstIt = true;
             if (!lastPath.empty())
             {
             outputToBatchFile << ";%path%";
@@ -212,7 +229,7 @@ void BatchGenerator::generateBatchFile()
             outputToBatchFile << " && start \"" << extractedString <<"\" "<< application;
         }
 
-        // Einblendung der Shel
+        // Einblendung der Shell
             outputToBatchFile << "\"\n@ECHO ON\n";
 
 
@@ -223,19 +240,22 @@ void BatchGenerator::generateBatchFile()
 
 void BatchGenerator::printHelp() 
 {
-    cout << "Verwendung: batchgen [Option] <Eingabedatei>\n"
-        << "Erstellt eine Batch-Datei basierend auf den Einstellungen in der JSON-Datei.\n\n"
+    cout << "-Helptext-\n\n"
+        << "Funktion des Programms:\n"
+        << "  Das Programm liest JSON-Dateien ein und erstellt daraus Batch-Dateien.\n"
+        << "  Die Batch-Dateien führen die in der JSON-Datei definierten Befehle aus.\n"
+        << "  Durch anhängen von den Dateipfaden der JSON-Dateien als Argumente\n"
+        << "  beim Start des Programms, können mehrere JSON-Dateien nacheinander eingelesen werden.\n"
+        << "  Die Batch-Dateien werden im selben Verzeichnis wie die JSON-Datei erstellt.\n"
+        << "  Die Batch-Dateien werden so benannt, wie es in der JSON-Datei definiert ist.\n"
+        << "  Beispiel(Aufruf): ./genbatch datei1.json datei2.json datei3.json\n\n"
         << "Optionen:\n"
-        << "  -h, --help       Zeigt diese Hilfemeldung an.\n\n"
-        << "Funktionen:\n"
-        << "  - Mehrere JSON-Dateien können nacheinander eingelesen werden.\n\n"
+        << "  -h, --help       Zeigt diesen Helptext an.\n\n"
         << "Autorenteam:\n"
-        << "  Entwickelt von Mika Urban, Fabio Behmüller, Niklas Scheffold und Tim Johler\n"
+        << "  Entwickelt von Fabio Behmüller, Mika Urban, Niklas Scheffold und Tim Johler\n"
         << "  Kontakt:\n"
-        << "    - Mika: mika@example.com\n"
-        << "    - Fabio: fabio@example.com\n"
-        << "    - Niklas: niklas@example.com\n"
-        << "    - Tim: tim@example.com\n";
+        << "    n.scheffold09@gmail.com\n"
+        << "    mika.urban24@gmail.com\n";
 }//end of printHelp
 
 
@@ -245,7 +265,7 @@ bool BatchGenerator::keyLineCount(const std::string& filename, const std::string
     std::ifstream file(filename);
     if (!std::filesystem::exists(filename)) 
     {//Failure occured
-        std::cerr << "File does not exist: " << filename << std::endl;
+        std::cerr << "-Fehler- Datei existiert nicht: " << filename << std::endl;
         //Failure occured
         retFailure = true;
     }

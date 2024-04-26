@@ -145,7 +145,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=projektabgabe
+CMAKE_PROJECT_NAME:STATIC=Projektabgabe
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -210,13 +210,13 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Value Computed by CMake
-projektabgabe_BINARY_DIR:STATIC=/home/tim/Programmieren/GitHub/Cpp_Projekt/build
+Projektabgabe_BINARY_DIR:STATIC=/home/tim/Programmieren/GitHub/Cpp_Projekt/build
 
 //Value Computed by CMake
-projektabgabe_IS_TOP_LEVEL:STATIC=ON
+Projektabgabe_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-projektabgabe_SOURCE_DIR:STATIC=/home/tim/Programmieren/GitHub/Cpp_Projekt
+Projektabgabe_SOURCE_DIR:STATIC=/home/tim/Programmieren/GitHub/Cpp_Projekt
 
 
 ########################
